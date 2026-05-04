@@ -1,6 +1,5 @@
 package com.uber.clone.dto;
 
-import com.uber.clone.enums.PaymentMethod;
 import com.uber.clone.enums.RideStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -15,6 +15,8 @@ import com.uber.clone.repository.RideRepository;
 import com.uber.clone.repository.UserRepository;
 import com.uber.clone.service.RideService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,8 +36,10 @@ public class RideServiceImpl implements RideService {
     @Override
     @Transactional
     public RideResponse createRide(RideRequest request) {
-        // For demo, using user ID 1 as rider. In real app, get from security context
-        User rider = userRepository.findById(1L)
+        // Get current authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User rider = userRepository.findByEmail(email)
             .orElseThrow(() -> new ResourceNotFoundException("Rider not found"));
 
         Ride ride = Ride.builder()
