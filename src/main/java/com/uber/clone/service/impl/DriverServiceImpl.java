@@ -74,7 +74,13 @@ public class DriverServiceImpl implements DriverService {
         DriverProfile driverProfile = driverProfileRepository.findByUserId(userId)
             .orElseThrow(() -> new ResourceNotFoundException("Driver profile not found"));
 
-        DriverStatus driverStatus = DriverStatus.valueOf(status.toUpperCase());
+        DriverStatus driverStatus;
+        try {
+            driverStatus = DriverStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid driver status: " + status);
+        }
+
         driverProfile.setStatus(driverStatus);
         driverProfile = driverProfileRepository.save(driverProfile);
 

@@ -48,8 +48,9 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
             .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/auth/**", "/h2-console/**", "/swagger-ui/**", "/api-docs/**").permitAll()
+                .requestMatchers("/api/auth/register", "/api/auth/login", "/h2-console/**", "/swagger-ui/**", "/api-docs/**").permitAll()
                 .anyRequest().authenticated()
             );
 

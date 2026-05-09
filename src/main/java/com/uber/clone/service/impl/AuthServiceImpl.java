@@ -100,8 +100,11 @@ public class AuthServiceImpl implements AuthService {
             .lastName(user.getLastName())
             .email(user.getEmail())
             .phone(user.getPhone())
-            .role(user.getRole().name())
+            .role(user.getRole())
             .active(user.isActive())
+            .emailVerified(user.isEmailVerified())
+            .profilePictureUrl(user.getProfilePictureUrl())
+            .createdAt(user.getCreatedAt())
             .build();
     }
 }

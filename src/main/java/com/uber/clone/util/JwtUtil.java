@@ -8,7 +8,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +28,15 @@ public class JwtUtil {
     private int jwtExpirationInMs;
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        if (keyBytes.length < 64) {
+            try {
+                keyBytes = MessageDigest.getInstance("SHA-512").digest(keyBytes);
+            } catch (NoSuchAlgorithmException e) {
+                throw new IllegalStateException("Failed to generate JWT signing key", e);
+            }
+        }
+        return Keys.hmacShaKeyFor(Arrays.copyOf(keyBytes, 64));
     }
 
     public String getUsernameFromToken(String token) {

@@ -35,4 +35,5 @@ public class RideResponse {
     private LocalDateTime acceptedAt;
     private LocalDateTime startedAt;
     private LocalDateTime completedAt;
+    private String cancellationReason;
 }

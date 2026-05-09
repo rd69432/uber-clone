@@ -99,17 +99,26 @@ public class RideServiceImpl implements RideService {
 
         ride.setStatus(status);
 
-        if (status == RideStatus.IN_PROGRESS) {
+        if (status == RideStatus.ACCEPTED) {
+            ride.setAcceptedAt(LocalDateTime.now());
+        } else if (status == RideStatus.IN_PROGRESS) {
             ride.setStartedAt(LocalDateTime.now());
         } else if (status == RideStatus.COMPLETED) {
             ride.setCompletedAt(LocalDateTime.now());
             ride.setPaymentStatus(PaymentStatus.COMPLETED);
             
-            // Update driver stats
             if (ride.getDriver() != null) {
                 DriverProfile driver = ride.getDriver();
                 driver.setStatus(DriverStatus.AVAILABLE);
                 driver.setTotalRides(driver.getTotalRides() + 1);
+                driverProfileRepository.save(driver);
+            }
+        } else if (status == RideStatus.CANCELLED) {
+            ride.setCancelledAt(LocalDateTime.now());
+            ride.setPaymentStatus(PaymentStatus.FAILED);
+            if (ride.getDriver() != null) {
+                DriverProfile driver = ride.getDriver();
+                driver.setStatus(DriverStatus.AVAILABLE);
                 driverProfileRepository.save(driver);
             }
         }
@@ -200,6 +209,7 @@ public class RideServiceImpl implements RideService {
             .acceptedAt(ride.getAcceptedAt())
             .startedAt(ride.getStartedAt())
             .completedAt(ride.getCompletedAt())
+            .cancellationReason(ride.getCancellationReason())
             .build();
     }
 }

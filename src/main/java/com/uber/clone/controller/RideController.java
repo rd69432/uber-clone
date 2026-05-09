@@ -73,6 +73,7 @@ public class RideController {
     @GetMapping("/active/{userId}")
     @Operation(summary = "Get active ride", description = "Get the current active ride for a user")
     public ResponseEntity<RideResponse> getActiveRide(@PathVariable Long userId) {
-        return ResponseEntity.ok(rideService.getActiveRide(userId));
+        RideResponse activeRide = rideService.getActiveRide(userId);
+        return activeRide != null ? ResponseEntity.ok(activeRide) : ResponseEntity.noContent().build();
     }
 }
